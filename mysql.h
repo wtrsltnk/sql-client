@@ -358,6 +358,12 @@ typedef struct st_mysql_res
 typedef MYSQL *(__stdcall *FP_MYSQL_INIT)(
     MYSQL *mysql);
 
+typedef unsigned long (__stdcall *FP_MYSQL_GET_CLIENT_VERSION)(
+    void);
+
+typedef unsigned long (__stdcall *FP_MYSQL_GET_SERVER_VERSION)(
+    MYSQL *mysql);
+
 typedef MYSQL * (__stdcall *FP_MYSQL_REAL_CONNECT)(
     MYSQL *mysql, 
     const char *host,
@@ -410,6 +416,8 @@ typedef MYSQL_ROW (__stdcall *FP_MYSQL_FETCH_ROW)(
 namespace mysql
 {
 static FP_MYSQL_INIT init = nullptr;
+static FP_MYSQL_GET_CLIENT_VERSION get_client_version = nullptr;
+static FP_MYSQL_GET_SERVER_VERSION get_server_version = nullptr;
 static FP_MYSQL_REAL_CONNECT real_connect = nullptr;
 static FP_MYSQL_CLOSE close = nullptr;
 static FP_MYSQL_ERROR error = nullptr;

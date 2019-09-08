@@ -4,7 +4,11 @@ project(sql)
 
 add_executable(sql
     program.cpp
-    mysql.h
+    odbcsql.cpp
+    )
+
+target_link_libraries(sql
+    PRIVATE odbc32
     )
 
 target_compile_features(sql

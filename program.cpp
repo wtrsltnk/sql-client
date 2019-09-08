@@ -1,6 +1,9 @@
 #include "mysql.h"
 #include <iostream>
 #include <windows.h>
+#include <sql.h>
+#include <sqlext.h>
+#include "odbcsql.h"
 
 void PrintResults(MYSQL *m, MYSQL_RES *resultset)
 {
@@ -51,6 +54,8 @@ MYSQL *InitMysql(char const * dllPath)
     }
 
     mysql::init = load_method<FP_MYSQL_INIT>(hGetProcIDDLL, "mysql_init");
+    mysql::get_client_version = load_method<FP_MYSQL_GET_CLIENT_VERSION>(hGetProcIDDLL, "mysql_get_client_version");
+    mysql::get_server_version = load_method<FP_MYSQL_GET_SERVER_VERSION>(hGetProcIDDLL, "mysql_get_server_version");
     mysql::real_connect = load_method<FP_MYSQL_REAL_CONNECT>(hGetProcIDDLL, "mysql_real_connect");
     mysql::close = load_method<FP_MYSQL_CLOSE>(hGetProcIDDLL, "mysql_close");
     mysql::error = load_method<FP_MYSQL_ERROR>(hGetProcIDDLL, "mysql_error");
@@ -64,7 +69,7 @@ MYSQL *InitMysql(char const * dllPath)
     mysql::num_fields = load_method<FP_MYSQL_NUM_FIELDS>(hGetProcIDDLL, "mysql_num_fields");
     mysql::fetch_row = load_method<FP_MYSQL_FETCH_ROW>(hGetProcIDDLL, "mysql_fetch_row");
     
-    if (!(mysql::init && mysql::real_connect && mysql::close && mysql::error && mysql::select_db && mysql::list_dbs && mysql::list_tables && mysql::list_fields && mysql::query && mysql::store_result && mysql::free_result && mysql::num_fields && mysql::fetch_row))
+    if (!(mysql::init && mysql::get_client_version && mysql::get_server_version && mysql::real_connect && mysql::close && mysql::error && mysql::select_db && mysql::list_dbs && mysql::list_tables && mysql::list_fields && mysql::query && mysql::store_result && mysql::free_result && mysql::num_fields && mysql::fetch_row))
     {
         return nullptr;
     }
@@ -74,7 +79,9 @@ MYSQL *InitMysql(char const * dllPath)
 
 int main(int argc, char *argv[])
 {
-    MYSQL *m = InitMysql("D:\\Misc\\Code\\small-apps\\sql\\libmariadb.dll");
+    OdbcMain("Driver={SQL Server Native Client 11.0}; Server=iq15r2; Database=KMS_FZ;Uid=ECUser;Pwd=ECPassword;");
+
+    MYSQL *m = InitMysql("libmysql.dll");
     if (!m)
     {
         std::cout << "init failed, reason: " << mysql::error(m) << std::endl;
