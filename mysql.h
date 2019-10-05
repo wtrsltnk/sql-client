@@ -432,4 +432,6 @@ static FP_MYSQL_NUM_FIELDS num_fields = nullptr;
 static FP_MYSQL_FETCH_ROW fetch_row = nullptr;
 }
 
+int MysqlMain(char const *connectionString, char const *query);
+
 #endif // _MYSQL_H_

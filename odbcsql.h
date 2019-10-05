@@ -3,6 +3,6 @@
 
 #include <windows.h>
 
-int OdbcMain(char const *connectionString);
+int OdbcMain(char const *connectionString, char const *query);
 
 #endif // _ODBCSQL_H_

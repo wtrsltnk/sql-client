@@ -6,7 +6,14 @@ add_subdirectory(sqlite)
 
 add_executable(sql
     program.cpp
+    common.cpp
+    common.h
     odbcsql.cpp
+    odbcsql.h
+    mysql.cpp
+    mysql.h
+    sqlite.cpp
+    sqlite.h
     )
 
 target_link_libraries(sql

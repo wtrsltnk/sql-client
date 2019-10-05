@@ -10,9 +10,10 @@
 #define CHECK_ERROR(e, s, h, t) ({\
             if (e!=SQL_SUCCESS && e != SQL_SUCCESS_WITH_INFO) {extract_error(s, h, t); goto exit;} \
 })
+
 void extract_error(char *fn, SQLHANDLE handle, SQLSMALLINT type)
 {
-	SQLINTEGER i = 0;
+    SQLINTEGER i = 0;
 	SQLINTEGER NativeError;
 	SQLCHAR SQLState[7];
 	SQLCHAR MessageText[256];
@@ -26,11 +27,12 @@ void extract_error(char *fn, SQLHANDLE handle, SQLSMALLINT type)
 			MessageText, sizeof(MessageText), &TextLength);
 		if (SQL_SUCCEEDED(ret)) {
 			printf("%s:%ld:%ld:%s\n",
-				SQLState, (long)i, (long)NativeError, MessageText);
+                SQLState, (long)i, (long)NativeError, MessageText);
 		}
 	} while (ret == SQL_SUCCESS);
 }
-int OdbcMain(char const *connectionString) {
+
+int OdbcMain(char const *connectionString, char const *query) {
 
 	SQLHENV   henv = SQL_NULL_HENV;   // Environment
 	SQLHDBC   hdbc = SQL_NULL_HDBC;   // Connection handle
@@ -61,13 +63,13 @@ int OdbcMain(char const *connectionString) {
 	CHECK_ERROR(retcode, "SQLSetConnectAttr(SQL_LOGIN_TIMEOUT)", hdbc, SQL_HANDLE_DBC);
 
 	// Connect to data source, replace with your connection string
-	retcode = SQLDriverConnect(hdbc, NULL, (SQLCHAR *)connectionString, SQL_NTS, outstr, sizeof(outstr), &outstrlen, SQL_DRIVER_NOPROMPT);
+    retcode = SQLDriverConnect(hdbc, NULL, (SQLCHAR *)connectionString, SQL_NTS, outstr, sizeof(outstr), &outstrlen, SQL_DRIVER_NOPROMPT);
 
 	// Allocate statement handle
 	retcode = SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
 	CHECK_ERROR(retcode, "SQLAllocHandle(SQL_HANDLE_STMT)", hstmt, SQL_HANDLE_STMT);
 
-	retcode = SQLExecDirect(hstmt, (SQLCHAR*) "SELECT DB_NAME()", SQL_NTS);
+    retcode = SQLExecDirect(hstmt, (SQLCHAR*) query, SQL_NTS);
 	CHECK_ERROR(retcode, "SQLExecDirect()", hstmt, SQL_HANDLE_STMT);
 
 	// Bind columns
